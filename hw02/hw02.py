@@ -223,3 +223,9 @@ def pow_church(m, n):
     """
     "*** YOUR CODE HERE ***"
     return n(m)
+
+# Church numerals are a way to represent non-negative integers via repeated function application. The definitions of zero, one, and two show that each numeral is a function that takes a function and repeats it a number of times on some argument x.
+
+# The church_to_int function reveals how a Church numeral can be mapped to our normal notion of non-negative integers using the increment function.
+
+# Addition of Church numerals is function composition of the functions of x, while multiplication is composition of the functions of f.
