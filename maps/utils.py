@@ -29,7 +29,7 @@ def key_of_min_value(d):
     'c'
     """
     # BEGIN Question 0
-    return min(d, key = )
+    return min(d, key = lambda x: d[x])
     # END Question 0
 
 def zip(*sequences):
@@ -62,6 +62,7 @@ def enumerate(s, start=0):
     """
     # BEGIN Question 0
     "*** YOUR CODE HERE ***"
+    return zip(range(start, start+len(s)), s)
     # END Question 0
 
 def distance(pos1, pos2):
@@ -82,4 +83,6 @@ def mean(s):
     """
     # BEGIN Question 1
     "*** YOUR CODE HERE ***"
+    assert len(s) > 0, "empty sequences are not allowed"
+    return sum(s)/len(s)
     # END Question 1

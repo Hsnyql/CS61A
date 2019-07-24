@@ -20,6 +20,14 @@ def find_closest(location, centroids):
     """
     # BEGIN Question 3
     "*** YOUR CODE HERE ***"
+    c, d = centroids[0], distance(location, centroids[0])
+    for point in centroids:
+        dd = distance(location, point)
+        if dd < d:
+            d = dd
+            c = point
+    return c
+    
     # END Question 3
 
 
@@ -49,6 +57,12 @@ def group_by_centroid(restaurants, centroids):
     """
     # BEGIN Question 4
     "*** YOUR CODE HERE ***"
+    rlist = []
+    for r in restaurants:
+        location = restaurant_location(r)
+        c = find_closest(location, centroids)
+        rlist.append([c, r])
+    return group_by_first(rlist)
     # END Question 4
 
 
