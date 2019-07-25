@@ -70,6 +70,7 @@ def find_centroid(cluster):
     """Return the centroid of the locations of the restaurants in cluster."""
     # BEGIN Question 5
     "*** YOUR CODE HERE ***"
+    return [mean([restaurant_location(x)[0] for x in cluster]), mean([restaurant_location(x)[1] for x in cluster])]
     # END Question 5
 
 
@@ -85,6 +86,9 @@ def k_means(restaurants, k, max_updates=100):
         old_centroids = centroids
         # BEGIN Question 6
         "*** YOUR CODE HERE ***"
+        groups = group_by_centroid(restaurants, centroids)
+        for i in range(k):
+            centroids[i] = find_centroid(groups[i])
         # END Question 6
         n += 1
     return centroids
@@ -110,6 +114,13 @@ def find_predictor(user, restaurants, feature_fn):
 
     # BEGIN Question 7
     "*** YOUR CODE HERE ***"
+    mean_xs, mean_ys, xys = mean(xs), mean(ys), zip(xs, ys)
+    S_xx = sum([(x - mean_xs) ** 2 for x in xs])
+    S_yy = sum([(y - mean_ys) ** 2 for y in ys])
+    S_xy = sum([(xy[0] - mean_xs) * (xy[1] - mean_ys) for xy in xys])
+    b = S_xy/S_xx
+    a = mean_ys - b * mean_xs
+    r_squared = (S_xy ** 2)/(S_xx * S_yy)
     # END Question 7
 
     def predictor(restaurant):
@@ -130,6 +141,12 @@ def best_predictor(user, restaurants, feature_fns):
     reviewed = user_reviewed_restaurants(user, restaurants)
     # BEGIN Question 8
     "*** YOUR CODE HERE ***"
+    best, max = find_predictor(user, reviewed, feature_fns[0])
+    for fn in feature_fns:
+        predictor, r_squared = find_predictor(user, reviewed, fn)
+        if r_squared > max:
+            best, max = predictor, r_squared
+    return best
     # END Question 8
 
 
@@ -146,6 +163,13 @@ def rate_all(user, restaurants, feature_fns):
     reviewed = user_reviewed_restaurants(user, restaurants)
     # BEGIN Question 9
     "*** YOUR CODE HERE ***"
+    results = {}
+    for restaurant in restaurants:
+        if restaurant in reviewed:
+            results[restaurant_name(restaurant)] = user_rating(user, restaurant_name(restaurant))
+        else:
+            results[restaurant_name(restaurant)] = predictor(restaurant)
+    return results
     # END Question 9
 
 
@@ -158,6 +182,7 @@ def search(query, restaurants):
     """
     # BEGIN Question 10
     "*** YOUR CODE HERE ***"
+    return [r for r in restaurants if query in restaurant_categories(r)]
     # END Question 10
 
 
