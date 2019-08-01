@@ -140,7 +140,8 @@ class Bee(Insect):
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
     is_watersafe = True
-
+    is_scared = False
+    has_scared = False
 
     def sting(self, ant):
         """Attack an ANT, reducing its armor by 1."""
@@ -171,6 +172,8 @@ class Bee(Insect):
         # Extra credit: Special handling for bee direction
         # BEGIN EC
         "*** YOUR CODE HERE ***"
+        if self.is_scared:
+            destination = self.place.entrance
         # END EC
         if self.blocked():
             self.sting(self.place.ant)
@@ -555,6 +558,10 @@ def make_slow(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    def new_action(colony):
+        if colony.time % 2 == 0:
+            action(colony)
+    return new_action
     # END Problem EC
 
 def make_scare(action, bee):
@@ -564,12 +571,29 @@ def make_scare(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    def new_action(colony):
+        if not bee.has_scared:
+            bee.has_scared = True
+            bee.is_scared = True
+        action(colony)
+    return new_action
     # END Problem EC
 
 def apply_effect(effect, bee, duration):
     """Apply a status effect to a BEE that lasts for DURATION turns."""
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    origin_action = bee.action
+    new_action = effect(bee.action, bee)
+    def action(colony):
+        nonlocal duration
+        if duration == 0:
+            bee.is_scared = False
+            return origin_action(colony)
+        else:
+            duration -= 1
+            return new_action(colony)
+    bee.action = action
     # END Problem EC
 
 
@@ -578,7 +602,9 @@ class SlowThrower(ThrowerAnt):
 
     name = 'Slow'
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    food_cost = 4
+    damage = 1
     # END Problem EC
 
     def throw_at(self, target):
@@ -591,12 +617,16 @@ class ScaryThrower(ThrowerAnt):
 
     name = 'Scary'
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    food_cost = 6
+    damage = 1
     # END Problem EC
 
     def throw_at(self, target):
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        if target:
+            apply_effect(make_scare, target, 2)
         # END Problem EC
 
 class LaserAnt(ThrowerAnt):
