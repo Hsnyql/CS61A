@@ -41,6 +41,13 @@ def deep_map_mut(fn, link):
     <9 <16> 25 36>
     """
     "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return
+    elif isinstance(link.first, Link):
+        deep_map_mut(fn, link.first)
+    else:
+        link.first = fn(link.first)
+    deep_map_mut(fn, link.rest)
 
 # Q11
 def has_cycle(link):
@@ -58,6 +65,14 @@ def has_cycle(link):
     False
     """
     "*** YOUR CODE HERE ***"
+    links = []
+    while link is not Link.empty:
+        if link in links:
+            return True
+        links.append(link)
+        link = link.rest
+    return False
+
 
 def has_cycle_constant(link):
     """Return whether link contains a cycle.
@@ -71,6 +86,19 @@ def has_cycle_constant(link):
     False
     """
     "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return False
+    else:
+        slow = link
+        fast = link.rest
+        while fast is not Link.empty:
+            if fast.rest is Link.empty:
+                return False
+            slow = slow.rest
+            fast = fast.rest.rest
+            if slow is fast:
+                return True
+        return False
 
 # Q12
 def reverse_other(t):
@@ -87,3 +115,13 @@ def reverse_other(t):
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
     "*** YOUR CODE HERE ***"
+    def helper(t, is_odd):
+        if t.is_leaf():
+            return
+        branch = len(t.branches)
+        if branch > 1 and is_odd:
+            for i in range(branch//2):
+                t.branches[i].label, t.branches[branch-i-1].label = t.branches[branch-i-1].label, t.branches[i].label
+        for b in t.branches:
+            helper(b, not is_odd)
+    return helper(t, True)
