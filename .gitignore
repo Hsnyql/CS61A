@@ -3,3 +3,4 @@
 .ok_storage.db
 __pycache__
 tests
+.vscode/settings.json
